@@ -2,13 +2,18 @@ let starWarsData
 let barGraph
 
 class BarGraph {
-  constructor(x, y, w, h, data) {
+  constructor(x, y, w, h) {
     this.x = x
     this.y = y
     this.w = w
     this.h = h
-    this.data = data
-    this.barWidth = w / (Object.keys(data).length * 1.5)
+    this.data = {}
+    this.barWidth = 50
+  }
+
+  addData(movie, imdbRating, rtRating) {
+    this.data[movie] = { IMDb: imdbRating, "Rotten Tomatoes": rtRating }
+    this.barWidth = this.w / (Object.keys(this.data).length * 1.5)
   }
 
   draw() {
@@ -42,7 +47,7 @@ class BarGraph {
 
       fill(0)
       textSize(12)
-      textAlign(CENTER, CENTER)
+      textAlign(CENTER, CENTER);
       text(movie, barX + this.barWidth / 2, this.y + this.h + 15)
 
       if (mouseX >= barX && mouseX <= barX + this.barWidth * 1.5) {
@@ -71,10 +76,16 @@ class BarGraph {
 }
 
 function setup() {
-  createCanvas(800, 500)
+  createCanvas(900, 500)
+  barGraph = new BarGraph(50, 50, 750, 350)
+
   loadJSON('star_wars_ratings.json', (data) => {
     starWarsData = data
-    barGraph = new BarGraph(50, 50, 700, 350, starWarsData)
+    for (let movie in starWarsData) {
+      let imdb = starWarsData[movie].IMDb
+      let rt = starWarsData[movie]["Rotten Tomatoes"]
+      barGraph.addData(movie, imdb, rt)
+    }
   })
 }
 
